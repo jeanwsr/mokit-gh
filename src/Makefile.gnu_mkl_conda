@@ -10,7 +10,7 @@ LIB = ../mokit/lib
 FFLAGS += -O2 -cpp -fPIC -fopenmp
 #MKL_FLAGS = -lmkl_rt
 MKL_FLAGS = -L$(BUILD_PREFIX)/lib -lmkl_rt
-F2PY   = f2py
+F2PY   = f2py$(BACKEND)
 F2_FLAGS = 
 F2_F90_FLAGS = --f90flags="-cpp"
 

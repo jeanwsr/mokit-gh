@@ -35,12 +35,13 @@ conda_build_test:
     refs:
       - newconda2
       - openmp
+      - f2py-meson
     changes:
       - "mokit/__init__.py"
       - "conda/*/meta.yaml"
   script:
-    - conda build --output-folder ./output conda/conda37
-    - conda build --output-folder ./output conda/conda38p
+    #- conda build --output-folder ./output conda/conda37
+    #- conda build --output-folder ./output conda/conda38p
     - conda build --output-folder ./output conda/conda39p
     - anaconda upload ./output/linux-64/mokit*.bz2 --skip-existing --label test
 
