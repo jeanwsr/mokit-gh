@@ -1,0 +1,69 @@
+name: CI build
+
+on:
+  push:
+    branches:
+      - master
+      - github-ci
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install flake8
+        run: pip install flake8
+      - name: Run flake8
+        run: flake8 --config .flake8
+
+  py39_gcc:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10"]
+    env:
+      TARGET: mokit-master_linux_py${{ matrix.python-version }}_gcc
+      OB_ROOT: /usr/lib/*/openblas-pthread
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up gcc, openblas
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc gfortran libopenblas-dev make
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install numpy
+        run: |
+          if [ "${{ matrix.python-version }}" = "3.9" ]; then
+            numpy-version=1.21
+          else
+            numpy-version=1.23
+          fi
+          pip install numpy==${{ numpy-version }}
+      - name: Build
+        run: |
+          cd src
+          make all -f Makefile.gnu_openblas_ci
+          cd ..
+      - name: Audit
+        run: |
+          cd mokit/lib
+          cp ${{ env.OB_ROOT }}/libopenblasp*.so .
+          cp /usr/lib/*/libgfortran.so.5.* .
+          ln -s libgfortran.so.5.* libgfortran.so.5
+          ln -s libopenblasp*.so libopenblas.so.0
+          cd ../..
+          mkdir ${{ env.TARGET }}
+          cp -r bin mokit doc examples CHANGELOG *.md $TARGET
+          mkdir ${{ env.TARGET }}/src
+          cp src/modify* ${{ env.TARGET }}/src
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.TARGET }}
+          path: ./${{ env.TARGET }}
