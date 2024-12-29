@@ -19,14 +19,14 @@ jobs:
       - name: Run flake8
         run: flake8 --config .flake8
 
-  py39_gcc:
+  ubuntu_py_gcc:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ["3.9", "3.10"]
     env:
       TARGET: mokit-master_linux_py${{ matrix.python-version }}_gcc
-      OB_ROOT: /usr/lib/*/openblas-pthread
+      OB_ROOT: /usr/lib/x86_64-linux-gnu
     steps:
       - uses: actions/checkout@v3
       - name: Set up gcc, openblas
@@ -52,10 +52,8 @@ jobs:
       - name: Audit
         run: |
           cd mokit/lib
-          cp ${{ env.OB_ROOT }}/libopenblasp*.so .
-          cp /usr/lib/*/libgfortran.so.5.* .
-          ln -s libgfortran.so.5.* libgfortran.so.5
-          ln -s libopenblasp*.so libopenblas.so.0
+          cp ${{ env.OB_ROOT }}/libopenblas.so .
+          cp /usr/lib/x86_64-linux-gnu/libgfortran.so .
           cd ../..
           mkdir ${{ env.TARGET }}
           cp -r bin mokit doc examples CHANGELOG *.md $TARGET
