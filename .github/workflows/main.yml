@@ -40,11 +40,10 @@ jobs:
       - name: Install numpy
         run: |
           if [ "${{ matrix.python-version }}" = "3.9" ]; then
-            numpy-version=1.21
+            pip install numpy==1.21
           else
-            numpy-version=1.23
+            pip install numpy==1.23
           fi
-          pip install numpy==${{ numpy-version }}
       - name: Build
         run: |
           cd src
