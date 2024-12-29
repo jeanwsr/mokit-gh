@@ -54,7 +54,8 @@ jobs:
           cd mokit/lib
           cp ${{ env.OB_ROOT }}/libopenblas.so .
           ls -l /usr/lib/*/libgfortran.so*
-          cp /usr/lib/x86_64-linux-gnu/libgfortran.so .
+          ls -l /usr/lib/libgfortran.so*
+          cp /usr/lib/x86_64-linux-gnu/libgfortran.so.5 ./libgfortran.so
           cd ../..
           mkdir ${{ env.TARGET }}
           cp -r bin mokit doc examples CHANGELOG *.md $TARGET
