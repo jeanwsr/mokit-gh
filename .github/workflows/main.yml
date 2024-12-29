@@ -32,7 +32,7 @@ jobs:
       - name: Set up gcc, openblas
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc gfortran libopenblas-dev make
+          sudo apt-get install -y libopenblas-dev 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -53,6 +53,7 @@ jobs:
         run: |
           cd mokit/lib
           cp ${{ env.OB_ROOT }}/libopenblas.so .
+          ls -l /usr/lib/*/libgfortran.so*
           cp /usr/lib/x86_64-linux-gnu/libgfortran.so .
           cd ../..
           mkdir ${{ env.TARGET }}
